@@ -17,6 +17,7 @@ async function run() {
     try {
         await client.connect();
         const taskCollection = client.db("googleTask").collection("tasks");
+        const compliteCollection = client.db("googleTask").collection("complite");
 
         app.post('/task', async (req, res) => {
             const newTask = req.body;
@@ -38,6 +39,7 @@ async function run() {
 
         app.put('/task/:id',async(req,res) =>{
             const id=req.params.id;
+            console.log('updaet',id)
             const updateTask = req.body;
             console.log(updateTask)
             const filter = {_id: ObjectId(id)}
@@ -52,9 +54,29 @@ async function run() {
               const result = await taskCollection.updateOne(filter, updateDoc, options);
               res.send(result);
         })
+
+
+        app.delete('/task/:id', async (req, res) => {
+            const id= req.body.id;
+            console.log('delete',id)
+            const query = { _id: ObjectId(id) };
+            const result = await taskCollection.deleteOne(query);
+            res.send(result)
+          })
+
+
+        app.post('/complite', async (req, res) => {
+            const newTask = req.body;
+            const result = await compliteCollection.insertOne(newTask);
+            res.send(result)
+        })
+
+        app.get('/complite', async (req, res) => {
+            const users = await compliteCollection.find().toArray();
+            res.send(users)
+        })
     }
-    finally {
-     
+    finally {     
     }
 }
 
